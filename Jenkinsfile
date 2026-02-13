@@ -21,7 +21,6 @@ pipeline {
                 }
             }
         }
-
         stage('Build & Test') {
             parallel {
 
