@@ -3,40 +3,48 @@ pipeline {
 
     stages {
 
-        stage('Checkout') {
-            steps {
-                echo 'Code fetched from GitHub repository'
+        stage('CI - Phase 1') {
+            parallel {
+                stage('Checkout') {
+                    steps {
+                        echo 'Code fetched from GitHub'
+                    }
+                }
+                stage('Environment Test') {
+                    steps {
+                        echo 'Environment verified'
+                    }
+                }
             }
         }
 
-        stage('Environment Test') {
-            steps {
-                echo 'Environment test completed'
+        stage('CI - Phase 2') {
+            parallel {
+                stage('Build') {
+                    steps {
+                        echo 'Build completed'
+                    }
+                }
+                stage('Test') {
+                    steps {
+                        echo 'Tests passed'
+                    }
+                }
             }
         }
 
-        stage('Build') {
-            steps {
-                echo 'Build completed successfully'
-            }
-        }
-
-        stage('Test') {
-            steps {
-                echo 'All tests passed'
-            }
-        }
-
-        stage('Deploy') {
-            steps {
-                echo 'Deployment completed successfully'
-            }
-        }
-
-        stage('Post Deployment Verification') {
-            steps {
-                echo 'Post deployment verification done'
-                echo 'Open deployed output in browser'
+        stage('CD - Phase') {
+            parallel {
+                stage('Deploy') {
+                    steps {
+                        echo 'Deployment done'
+                    }
+                }
+                stage('Post Deployment Verification') {
+                    steps {
+                        echo 'Post deployment verification done'
+                    }
+                }
             }
         }
     }
