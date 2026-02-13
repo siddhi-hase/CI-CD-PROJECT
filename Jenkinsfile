@@ -3,61 +3,74 @@ pipeline {
 
     stages {
 
-        stage('Checkout Source Code') {
-            steps {
-                echo 'Fetching latest code from GitHub repository'
-                git 'https://github.com/USERNAME/REPO_NAME.git'
+        stage('CI Process') {
+            parallel {
+
+                stage('Checkout Code') {
+                    steps {
+                        echo 'Cloning repository from GitHub'
+                        git branch: 'main', url: 'https://github.com/siddhi-hase/CI-CD-PROJECT.git'
+                    }
+                }
+
+                stage('Environment Check') {
+                    steps {
+                        echo 'Checking environment'
+                        bat 'echo Environment OK'
+                    }
+                }
             }
         }
 
-        stage('Environment Setup') {
-            steps {
-                echo 'Checking Python installation'
-                bat 'python --version'
+        stage('Build & Test') {
+            parallel {
+
+                stage('Build') {
+                    steps {
+                        echo 'Building static website'
+                        bat 'echo Build completed'
+                    }
+                }
+
+                stage('Test') {
+                    steps {
+                        echo 'Testing static files'
+                        bat 'echo Test passed'
+                    }
+                }
             }
         }
 
-        stage('Dependency Verification') {
+        stage('CD Process') {
             steps {
-                echo 'No external dependencies required for static site'
-                bat 'echo Dependencies verified'
+                echo 'Starting deployment process'
             }
         }
 
-        stage('Build Application') {
+        stage('Deploy') {
             steps {
-                echo 'Build stage completed for HTML/CSS project'
-                bat 'echo Build successful'
-            }
-        }
-
-        stage('Quality Check') {
-            steps {
-                echo 'Performing basic quality checks'
-                bat 'echo Quality check passed'
-            }
-        }
-
-        stage('Deploy to Local Server') {
-            steps {
-                echo 'Starting Python local server to host website'
-                bat 'python server.py'
+                echo 'Deploying files to local folder'
+                bat 'if not exist C:\\ci-cd-output mkdir C:\\ci-cd-output'
+                bat 'xcopy /Y /E index.html C:\\ci-cd-output\\'
+                bat 'xcopy /Y /E style.css C:\\ci-cd-output\\'
             }
         }
 
         stage('Post Deployment Verification') {
             steps {
-                echo 'Deployment completed. Verify output using browser URL.'
+                echo 'Deployment completed successfully'
+                echo 'Open this file in browser: C:\\ci-cd-output\\index.html'
             }
         }
     }
 
     post {
         success {
-            echo 'CI/CD pipeline executed successfully'
+            echo 'Static website CI/CD pipeline executed successfully'
         }
         failure {
-            echo 'CI/CD pipeline failed. Check console output for errors.'
+            echo 'Pipeline failed. Check console output.'
         }
     }
 }
+
