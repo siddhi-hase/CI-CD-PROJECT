@@ -17,7 +17,6 @@ pipeline {
                 }
             }
         }
-
         stage('CI - Phase 2') {
             parallel {
                 stage('Build') {
